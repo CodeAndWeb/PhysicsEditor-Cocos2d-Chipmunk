@@ -63,6 +63,16 @@
 -(cpBody*) createBodyWithName:(NSString*)name inSpace:(cpSpace*)space withData:(void*)data;
 
 /**
+ * Creates a body with the given name & returns al it's shapes.
+ * Body itself can be accessed through any of the shape->body.
+ * Allows you to create body and shapes without adding it instantly to the space.
+ * @param name name of the body
+ * @param data data to set in the body
+ * @result NSArray with NSValues with pointers to cpShape structures
+ */
+-(NSArray *) shapesOfBodyWithName:(NSString*)name withData: (void *) data;
+
+/**
  * Returns the anchor point of the given sprite
  * @param shape name of the shape to get the anchorpoint for
  * @return anchorpoint

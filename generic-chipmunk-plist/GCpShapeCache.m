@@ -451,5 +451,71 @@ typedef enum
     return TRUE;
 }
 
+-(NSArray *) shapesOfBodyWithName:(NSString*)name withData: (void *) data
+{
+    GBodyDef *bd = [bodyDefs objectForKey:name];
+    NSAssert(bd != 0, @"Body not found");
+    if(!bd)
+    {
+        return nil;
+    }
+    
+    // create and add body to space
+    cpBody *body = cpBodyNew(bd->mass, bd->momentum);
+    
+    // set the center point
+    body->p = bd->anchorPoint;
+    
+    // set the data
+    body->data = data;
+    
+    NSMutableArray *shapes = [NSMutableArray arrayWithCapacity: [bd->fixtures count]];
+    
+    // iterate over fixtures
+    for(GFixtureData *fd in bd->fixtures)
+    {
+        if(fd->fixtureType == GFIXTURE_CIRCLE)
+        {
+            cpShape* shape = cpCircleShapeNew(body, fd->radius, fd->center);
+            
+            // set values
+            shape->e = fd->elasticity; 
+            shape->u = fd->friction;
+            shape->surface_v = fd->surfaceVelocity;
+            shape->collision_type = fd->collisionType;
+            shape->group = fd->group;
+            shape->layers = fd->layers;
+            shape->sensor = fd->isSensor;
+            
+            // add shape to resulting array
+            [shapes addObject: [NSValue valueWithPointer: shape]];
+        }
+        else
+        {
+            // iterate over polygons 
+            for(GPolygon *p in fd->polygons)
+            {
+                // create new shape
+                cpShape* shape = cpPolyShapeNew(body, p->numVertices, p->vertices, CGPointZero);
+                
+                // set values
+                shape->e = fd->elasticity; 
+                shape->u = fd->friction;
+                shape->surface_v = fd->surfaceVelocity;
+                shape->collision_type = fd->collisionType;
+                shape->group = fd->group;
+                shape->layers = fd->layers;
+                shape->sensor = fd->isSensor;
+                
+                // add shape to space
+                [shapes addObject: [NSValue valueWithPointer: shape]];
+                
+            }            
+        }        
+    }
+    
+    return shapes;
+}
+
 @end
 
