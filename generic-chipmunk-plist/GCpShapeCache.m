@@ -404,7 +404,7 @@ typedef enum
                 NSDictionary *circleData = [fixtureData objectForKey:@"circle"];
 
                 fd->radius = [[circleData objectForKey:@"radius"] floatValue];
-                fd->center = CGPointFromString_([fixtureData objectForKey:@"position"]);
+                fd->center = CGPointFromString_([circleData objectForKey:@"position"]);
                 totalArea += 3.1415927*fd->radius*fd->radius;
             }
             else
